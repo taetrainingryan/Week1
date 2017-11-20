@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -46,6 +49,7 @@ public class signup extends AppCompatActivity implements DatePickerDialogFragmen
     private RealmController realmController;
     private RadioGroup gender;
     private Bitmap photoConvert;
+    private Bitmap backup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,9 @@ public class signup extends AppCompatActivity implements DatePickerDialogFragmen
         postalAddress = (EditText) findViewById(R.id.postalAddress);
         spinner2 = (Spinner) findViewById(R.id.spinner2);
         gender = (RadioGroup) findViewById(R.id.gender) ;
+
+        backup = BitmapFactory.decodeResource(getResources(),
+                R.mipmap.backupimage);
 
 
         String[] courses={"United Kingdom","France","Spain","Germany","Holland"};
@@ -100,10 +107,17 @@ public class signup extends AppCompatActivity implements DatePickerDialogFragmen
         RadioButton r = (RadioButton)  gender.getChildAt(idx);
         String selectedtext = r.getText().toString();
 
-        ByteArrayOutputStream stream1 = new ByteArrayOutputStream();
-        photoConvert.compress(Bitmap.CompressFormat.PNG, 100, stream1);
-        byte[] photoConverted = stream1.toByteArray();
 
+        ByteArrayOutputStream stream1 = new ByteArrayOutputStream();
+
+        if(photoConvert == null){
+            photoConvert = backup;
+            photoConvert.compress(Bitmap.CompressFormat.PNG, 1, stream1);
+        }
+
+        photoConvert.compress(Bitmap.CompressFormat.PNG, 100, stream1);
+
+        byte[] photoConverted = stream1.toByteArray();
 
         RealmBackend realmCustomer = new RealmBackend(
                 name.getText().toString(),
